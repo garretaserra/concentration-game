@@ -12,11 +12,9 @@ class App extends React.Component {
             gameStarted: false, // Used to detect if player has submitted a keyword.
             selectedCardIndex: null,    // Used to save first selection of the user when trying to select pairs
         }
-
     }
 
     apiKey = "5707439-576ba9bbcdefa781f30c1cc40";
-
     keywordSubmit = (keyword) => {
         this.setState({gameStarted: true});
         let xhr = new XMLHttpRequest();
@@ -27,7 +25,6 @@ class App extends React.Component {
                 // 2 Cards per image
                 this.assignRandomSlot(image);
                 this.assignRandomSlot(image);
-
             })
         });
         xhr.open('GET', 'https://pixabay.com/api/?key=' + this.apiKey + '&q=' + keyword + '&per_page=8');
@@ -50,33 +47,55 @@ class App extends React.Component {
     }
 
     handleClick = (i) =>{
-        console.log(i);
-        // Reject clicking the same card twice
-        if(this.state.selectedCardIndex === i){
-            console.log('Same card');
-        }
+        let selectedCardIndex = this.state.selectedCardIndex;
+        // Reject clicking the same card twice or on solved card
+        if(selectedCardIndex === i || this.state.cards[i].solved){}
         // Selecting first card
-        else if(this.state.selectedCardIndex == null){
+        else if(selectedCardIndex == null){
             this.setState({selectedCardIndex: i})
-            console.log('First card');
         }
         // Selecting second card
         else{
             // Correct
-            if(this.state.cards[i].id === this.state.cards[this.state.selectedCardIndex].id){
+            if(this.state.cards[i].id === this.state.cards[selectedCardIndex].id){
                 // Update cards to solved state
                 let cards = [...this.state.cards];
                 let card1 = {...cards[i]};
-                let card2 = {...cards[this.state.selectedCardIndex]};
+                let card2 = {...cards[selectedCardIndex]};
                 card1.solved = true;
                 card2.solved = true;
                 cards[i] = card1;
-                cards[this.state.selectedCardIndex] = card2;
-                this.setState({cards: cards});
-                console.log('Correct pair');
+                cards[selectedCardIndex] = card2;
+                this.setState({cards: cards}, () =>{
+                    // Check if game has been won
+                    let correctCards = this.state.cards.reduce((carry, card)=>{return carry + (card.solved ? 1 : 0)}, 0);
+                    if(correctCards === 16){
+                        setTimeout(()=>{
+                            alert('You have won!');
+                        }, 1000);
+                    }
+                });
             }
+            // Incorrect (show cards briefly)
             else{
-                console.log('Incorrect pair');
+                let cards = [...this.state.cards];
+                let card = {...this.state.cards[i]};
+                card.show = true;
+                cards[i] = card;
+                card = {...this.state.cards[selectedCardIndex]};
+                card.show = true;
+                cards[selectedCardIndex] = card;
+                this.setState({cards: cards});
+                setTimeout(()=>{
+                    let cards = [...this.state.cards];
+                    let card = {...this.state.cards[i]};
+                    card.show = false;
+                    cards[i] = card;
+                    card = {...this.state.cards[selectedCardIndex]};
+                    card.show = false;
+                    cards[selectedCardIndex] = card;
+                    this.setState({cards: cards});
+                }, 1000);
             }
             this.setState({selectedCardIndex: null})
         }

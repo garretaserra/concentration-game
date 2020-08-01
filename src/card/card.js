@@ -4,14 +4,14 @@ class Card extends React.Component{
     id;
     image;
     solved;
+    show;
 
     handleClick = () =>{
         this.props.click(this.props.i);
     }
 
     render() {
-
-        if(this.props.card.solved || this.props.selectedCard === this.props.i){
+        if(this.props.card.show || this.props.card.solved || this.props.selectedCard === this.props.i){
         return (
             <div className="grid-item">
                 <img className="defaultImage keywordImage" src={this.props.card.image}/>

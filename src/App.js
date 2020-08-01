@@ -19,38 +19,59 @@ class App extends React.Component {
         this.setState({gameStarted: true});
         let xhr = new XMLHttpRequest();
         xhr.addEventListener('load', ()=>{
+            // Set state with the randomly ordered images on an array
+            let randomArr = randomArray(16)
+            let cards = new Array(16);
             let res = JSON.parse(xhr.response);
-            res.hits.forEach((image, index)=>{
-                // 2 Cards per image
-                this.assignRandomSlot(image);
-                this.assignRandomSlot(image);
-                if(index === 7){
-                    setTimeout(()=>{
-                        let cards = [...this.state.cards];
-                        cards.forEach((card)=>{card.show = false});
-                        this.setState({cards: cards});
-                    }, 1500);
-                }
+            let promises = res.hits.map((image, i)=>{
+                return new Promise((resolve)=>{
+                    let card = new Card();
+                    card.id = image.id;
+                    card.image = image.largeImageURL;
+                    card.show = false;
+                    cards[randomArr[i*2]] = card;
+                    cards[randomArr[i*2+1]] = card;
+                    resolve();
+                })
             });
+            Promise.all(promises).then(()=>{
+                this.setState({cards: cards}, ()=>{
+                    setTimeout(()=>{
+                        this.startGame();
+                    }, 1000);
+                });
+            })
         });
         xhr.open('GET', 'https://pixabay.com/api/?key=' + this.apiKey + '&q=' + keyword + '&per_page=8');
         xhr.send();
     }
 
-    assignRandomSlot(image){
-        // Find random empty card to fill with image
-        let random = Math.floor(Math.random()*16);
-        while(this.state.cards[random] !== undefined){
-            random = Math.floor(Math.random()*16);
-        }
-        let card = new Card();
-        card.id = image.id;
-        card.image = image.largeImageURL;
-        card.show = true;
-
-        let cards =this.state.cards.slice();
-        cards[random] = card;
-        this.setState({keyword: this.state.keyword, cards: cards});
+    startGame(){
+        // Show cards
+        let cards = [...this.state.cards];
+        let promises = cards.map((card)=>{
+            return new Promise((resolve)=>{
+                card.show = true;
+                resolve();
+            })
+        })
+        Promise.all(promises).then(()=>{
+            this.setState({cards: cards}, () => {
+                // Hide cards
+                setTimeout(()=>{
+                    let cards = [...this.state.cards];
+                    let promises = cards.map((card)=>{
+                        return new Promise((resolve)=>{
+                            card.show = false;
+                            resolve();
+                        })
+                    })
+                    Promise.all(promises).then(()=>{
+                        this.setState({cards: cards});
+                    })
+                }, 1500);
+            })
+        })
     }
 
     handleClick = (i) =>{
@@ -129,3 +150,14 @@ class App extends React.Component {
 }
 
 export default App;
+
+function randomArray(len) {
+    let arr0 = [...Array(len).keys()];
+    let result = [];
+    while (arr0.length){
+        let index = Math.floor(Math.random()*arr0.length);
+        result.push(arr0[index]);
+        arr0.splice(index,1);
+    }
+    return result;
+}

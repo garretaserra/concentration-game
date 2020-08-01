@@ -69,7 +69,7 @@ class App extends React.Component {
                     Promise.all(promises).then(()=>{
                         this.setState({cards: cards});
                     })
-                }, 1500);
+                }, 150000);
             })
         })
     }
@@ -132,7 +132,7 @@ class App extends React.Component {
     render() {
         if(this.state.gameStarted) {
             return (
-                <div>
+                <div className="root-container">
                     <div className="grid-container">
                         {this.state.cards.map((card, i) => (
                             <Card card={card} key={i} i={i} selectedCard={this.state.selectedCardIndex} click={this.handleClick}/>

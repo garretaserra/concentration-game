@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import Card from "./card";
+import Card from "./card/card";
 import './landing-page/landing-page'
 import LandingPage from "./landing-page/landing-page";
 
@@ -17,7 +17,7 @@ class App extends React.Component {
 
     apiKey = "5707439-576ba9bbcdefa781f30c1cc40";
 
-    submit = (keyword) => {
+    keywordSubmit = (keyword) => {
         this.setState({gameStarted: true});
         let xhr = new XMLHttpRequest();
         xhr.addEventListener('load', ()=>{
@@ -49,15 +49,46 @@ class App extends React.Component {
         this.setState({keyword: this.state.keyword, cards: cards});
     }
 
+    handleClick = (i) =>{
+        console.log(i);
+        // Reject clicking the same card twice
+        if(this.state.selectedCardIndex === i){
+            console.log('Same card');
+        }
+        // Selecting first card
+        else if(this.state.selectedCardIndex == null){
+            this.setState({selectedCardIndex: i})
+            console.log('First card');
+        }
+        // Selecting second card
+        else{
+            // Correct
+            if(this.state.cards[i].id === this.state.cards[this.state.selectedCardIndex].id){
+                // Update cards to solved state
+                let cards = [...this.state.cards];
+                let card1 = {...cards[i]};
+                let card2 = {...cards[this.state.selectedCardIndex]};
+                card1.solved = true;
+                card2.solved = true;
+                cards[i] = card1;
+                cards[this.state.selectedCardIndex] = card2;
+                this.setState({cards: cards});
+                console.log('Correct pair');
+            }
+            else{
+                console.log('Incorrect pair');
+            }
+            this.setState({selectedCardIndex: null})
+        }
+    }
+
     render() {
         if(this.state.gameStarted) {
             return (
                 <div>
                     <div className="grid-container">
                         {this.state.cards.map((card, i) => (
-                            <div className="grid-item" key={i}>
-                                <img className="image" src={card.image}/>
-                            </div>
+                            <Card card={card} key={i} i={i} selectedCard={this.state.selectedCardIndex} click={this.handleClick}/>
                         ))}
                     </div>
                 </div>
@@ -65,7 +96,7 @@ class App extends React.Component {
         }
         else{
             return (
-                <LandingPage handleSubmit={this.submit}/>
+                <LandingPage handleSubmit={this.keywordSubmit}/>
             )
         }
     }

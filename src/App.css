@@ -4,12 +4,16 @@
 }
 
 .grid-item{
-  width: 200px;
+  width: 140px;
   height: 200px;
 }
 
-.image{
+.defaultImage{
   object-fit: cover;
   width: 100%;
   height: 100%;
+}
+
+.keywordImage{
+  border-radius: 20px;
 }

@@ -69,7 +69,7 @@ class App extends React.Component {
                     Promise.all(promises).then(()=>{
                         this.setState({cards: cards});
                     })
-                }, 150000);
+                }, 1500);
             })
         })
     }

@@ -26,7 +26,7 @@ class Card extends React.Component{
         }
         else{
             return(
-                <div className="grid-item" onClick={this.handleClick}>
+                <div className="grid-item" draggable="false" onClick={this.handleClick}>
                     <img alt={"Loading"} className="back-side" src="https://cdn.pixabay.com/photo/2012/05/07/18/53/card-game-48983_960_720.png"/>
                 </div>
             )

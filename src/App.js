@@ -20,12 +20,18 @@ class App extends React.Component {
         let xhr = new XMLHttpRequest();
         xhr.addEventListener('load', ()=>{
             let res = JSON.parse(xhr.response);
-            res.hits.forEach((image)=>{
-
+            res.hits.forEach((image, index)=>{
                 // 2 Cards per image
                 this.assignRandomSlot(image);
                 this.assignRandomSlot(image);
-            })
+                if(index === 7){
+                    setTimeout(()=>{
+                        let cards = [...this.state.cards];
+                        cards.forEach((card)=>{card.show = false});
+                        this.setState({cards: cards});
+                    }, 1500);
+                }
+            });
         });
         xhr.open('GET', 'https://pixabay.com/api/?key=' + this.apiKey + '&q=' + keyword + '&per_page=8');
         xhr.send();
@@ -40,6 +46,7 @@ class App extends React.Component {
         let card = new Card();
         card.id = image.id;
         card.image = image.largeImageURL;
+        card.show = true;
 
         let cards =this.state.cards.slice();
         cards[random] = card;

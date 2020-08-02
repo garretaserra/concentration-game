@@ -1,16 +1,18 @@
 import React from "react";
 import "./App.css";
 import Card from "./card/card";
-import "./landing-page/landing-page";
 import LandingPage from "./landing-page/landing-page";
 import Clock from "./clock/clock";
+import SummaryPage from './summary-page/summary-page'
 
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             cards: Card[16] = new Array(20),
-            gameStarted: false, // Used to detect if player has submitted a keyword.
+            gameStarted: false,         // Used to detect if player has submitted a keyword.
+            gameFinished: false,        // True when on summary screen
+            elapsedTime: 0,             // Time taken by the player to finish game (seconds)
             selectedCardIndex: null,    // Used to save first selection of the user when trying to select pairs
             startTime: Date.now(),
         };
@@ -65,7 +67,7 @@ class App extends React.Component {
             })
         });
         Promise.all(promises).then(() => {
-            this.setState({cards: cards}, () => {this.startGame(cards)});
+            this.setState({cards: cards, gameFinished: false}, () => {this.startGame(cards)});
 
         });
     }
@@ -138,10 +140,7 @@ class App extends React.Component {
                     if(correctCards === 20){
                         setTimeout(()=>{
                             let elapsedTime = Math.floor((Date.now() - this.state.startTime)/1000);
-                            if(window.confirm('You have won! It has taken ' + elapsedTime + ' seconds to finish, do you want to choose another keyword?'))
-                                window.location.reload();
-                            else
-                                this.resetGame();
+                            this.setState({elapsedTime: elapsedTime, gameFinished: true});
                         }, 500);
                     }
                 });
@@ -161,7 +160,12 @@ class App extends React.Component {
     }
 
     render() {
-        if(this.state.gameStarted) {
+        if(this.state.gameFinished){
+            return (
+                <SummaryPage newKeyword={()=>window.location.reload()} sameKeyword={()=>this.resetGame()} time={this.state.elapsedTime}/>
+            )
+        }
+        else if(this.state.gameStarted) {
             return (
                 <div className="root-container">
                     <div className="grid-container">

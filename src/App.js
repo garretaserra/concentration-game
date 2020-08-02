@@ -6,10 +6,11 @@ import Clock from "./clock/clock";
 import SummaryPage from './summary-page/summary-page'
 
 class App extends React.Component {
+    cardNumber = 20;    // Total number of cards the game is payed with
     constructor(props) {
         super(props);
         this.state = {
-            cards: Card[16] = new Array(20),
+            cards: new Array(this.cardNumber),
             gameStarted: false,         // Used to detect if player has submitted a keyword.
             gameFinished: false,        // True when on summary screen
             elapsedTime: 0,             // Time taken by the player to finish game (seconds)
@@ -33,12 +34,12 @@ class App extends React.Component {
         xhr.addEventListener("load", ()=>{
             let res = JSON.parse(xhr.response);
             //Check that there are enough images
-            if(res.hits.length < 10){
-                window.alert("Keyword with only " + res.hits.length + " images, 10 are needed.");
+            if(res.hits.length < (this.cardNumber/2)){
+                window.alert("Keyword with only " + res.hits.length + " images, " + (this.cardNumber/2) + " are needed.");
                 return;
             }
 
-            let cards = new Array(20);
+            let cards = new Array(this.cardNumber);
             let promises = res.hits.map((image, i) => {
                 return new Promise(resolve => {
                     let card = new Card();
@@ -80,7 +81,7 @@ class App extends React.Component {
 
     updateCards = (properties, value, indexes, callback) => {
         if(indexes.length === 0){
-            indexes = [...(Array(20)).keys()];
+            indexes = [...(Array(this.cardNumber)).keys()];
         }
         let cards = [...this.state.cards];
         let promises = indexes.map((i) => {
@@ -99,8 +100,8 @@ class App extends React.Component {
     startGame(cards){
         this.preventClick = true;
         this.setState({gameStarted: true});
-        let randomArr = randomArray(20);
-        let shuffledCards = new Array(20);
+        let randomArr = randomArray(this.cardNumber);
+        let shuffledCards = new Array(this.cardNumber);
         let promises = cards.map((card, i) => {
             return new Promise((resolve) => {
                 shuffledCards[randomArr[i]] = JSON.parse(JSON.stringify(card));
@@ -150,7 +151,7 @@ class App extends React.Component {
                     let correctCards = this.state.cards.reduce((carry, card) => {
                         return carry + (card.solved ? 1 : 0)
                     }, 0);
-                    if(correctCards === 20){
+                    if(correctCards === this.cardNumber){
                         let elapsedTime = Math.floor((Date.now() - this.state.startTime)/1000);
                         setTimeout(()=>{
                             this.setState({elapsedTime: elapsedTime, gameFinished: true});

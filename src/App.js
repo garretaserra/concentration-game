@@ -91,6 +91,7 @@ class App extends React.Component {
     }
 
     startGame(cards){
+        this.preventClick = true;
         this.setState({gameStarted: true, startTime: Date.now()});
         let randomArr = randomArray(20);
         let shuffledCards = new Array(20);
@@ -109,12 +110,14 @@ class App extends React.Component {
         });
     }
 
+    preventClick = true;
     temporarilyShowCards(){
         // Show cards
         this.updateCards(['show'], true, [], () => {
             // Hide cards
             setTimeout(()=>{
                 this.updateCards(['show'], false, []);
+                this.preventClick = false;
             }, 1500);
         });
     }
@@ -122,7 +125,7 @@ class App extends React.Component {
     handleClick = (i) =>{
         let selectedCardIndex = this.state.selectedCardIndex;
         // Reject clicking the on the same card twice or on solved card
-        if(selectedCardIndex === i || this.state.cards[i].solved){}
+        if(selectedCardIndex === i || this.state.cards[i].solved || this.preventClick){}
         // Selecting first card
         else if(selectedCardIndex == null){
             this.setState({selectedCardIndex: i});
@@ -148,9 +151,11 @@ class App extends React.Component {
             // Incorrect: selected different cards
             else{
                 //Show cards briefly
+                this.preventClick = true;
                 this.updateCards(['show'], true, [i, selectedCardIndex], () => {
                         setTimeout(() => {
                             this.updateCards(['show'], false, [i, selectedCardIndex])
+                            this.preventClick = false;
                         }, 1500);
                     }
                 );

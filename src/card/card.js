@@ -22,7 +22,7 @@ class Card extends React.Component{
 
     componentDidMount() {
         // Preload images
-        const img = new Image()
+        const img = new Image();
         img.src = this.props.card.image;
     }
 

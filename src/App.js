@@ -17,6 +17,9 @@ class App extends React.Component {
     apiKey = "5707439-576ba9bbcdefa781f30c1cc40";
     keywordSubmit = (keyword) => {
         let xhr = new XMLHttpRequest();
+        xhr.addEventListener('error', ()=>{
+            window.alert('An error occurred while making a request to Pixabay');
+        })
         xhr.addEventListener('load', ()=>{
             let res = JSON.parse(xhr.response);
             //Check that there are enough images

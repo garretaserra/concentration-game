@@ -16,7 +16,6 @@ class App extends React.Component {
 
     apiKey = "5707439-576ba9bbcdefa781f30c1cc40";
     keywordSubmit = (keyword) => {
-        this.setState({gameStarted: true});
         let xhr = new XMLHttpRequest();
         xhr.addEventListener('load', ()=>{
             let res = JSON.parse(xhr.response);
@@ -47,21 +46,26 @@ class App extends React.Component {
     }
 
     resetGame() {
-        let cards = new Array(16);
-        let promises = this.state.cards.map((card)=>{
+        let cards = [];
+        let promises = [...this.state.cards].map((card)=>{
             return new Promise((resolve)=>{
-                card.show = false;
-                card.solved = false;
-                cards.push(card);
+                let newCard = new Card();
+                newCard.show = false;
+                newCard.solved = false;
+                newCard.id = card.id;
+                newCard.image = card.image;
+                cards.push(newCard);
                 resolve();
             })
         })
         Promise.all(promises).then(()=>{
-            this.startGame(this.state.cards);
+            this.setState({cards: cards}, ()=>{this.startGame(cards)})
+
         });
     }
 
     startGame(cards){
+        this.setState({gameStarted: true});
         let randomArr = randomArray(16)
         let shuffledCards = new Array(16);
         let promises = cards.map((card, i)=>{

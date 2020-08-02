@@ -38,7 +38,7 @@ class App extends React.Component {
                 this.setState({cards: cards}, ()=>{
                     setTimeout(()=>{
                         this.startGame();
-                    }, 1000);
+                    }, 1500);
                 });
             })
         });
@@ -69,7 +69,7 @@ class App extends React.Component {
                     Promise.all(promises).then(()=>{
                         this.setState({cards: cards});
                     })
-                }, 1500);
+                }, 2000);
             })
         })
     }
@@ -100,7 +100,7 @@ class App extends React.Component {
                     if(correctCards === 16){
                         setTimeout(()=>{
                             alert('You have won!');
-                        }, 1000);
+                        }, 500);
                     }
                 });
             }
@@ -123,7 +123,7 @@ class App extends React.Component {
                     card.show = false;
                     cards[selectedCardIndex] = card;
                     this.setState({cards: cards});
-                }, 1000);
+                }, 1500);
             }
             this.setState({selectedCardIndex: null})
         }

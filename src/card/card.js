@@ -6,8 +6,18 @@ class Card extends React.Component{
     solved;
     show;
 
-    handleClick = () =>{
+    handleClick(){
         this.props.click(this.props.i);
+    }
+
+    triggerRotation(){
+        let element = this.component;
+        if(element.style.transform === "rotateY(180deg)") {
+            element.style.transform = "rotateY(0deg)";
+        }
+        else {
+            element.style.transform = "rotateY(180deg)";
+        }
     }
 
     componentDidMount() {
@@ -16,21 +26,19 @@ class Card extends React.Component{
         img.src = this.props.card.image;
     }
 
+    isShown = false;
     render() {
-        if(this.props.card.show || this.props.card.solved || this.props.selectedCard === this.props.i){
-        return (
-            <div className="grid-item">
-                <img alt={"Loading"} className="front-side" src={this.props.card.image}/>
+        let shouldShow = this.props.card.show || this.props.card.solved || this.props.selectedCard === this.props.i;
+        if(this.isShown !== shouldShow){
+                this.triggerRotation();
+                this.isShown = shouldShow;
+            }
+        return(
+            <div ref={c => (this.component = c)} className="grid-item" onClick={this.handleClick.bind(this)}>
+                <img className="back-side" src={this.props.card.image} alt=""/>
+                <img className="front-side" src="https://cdn.pixabay.com/photo/2012/05/07/18/53/card-game-48983_960_720.png" alt=""/>
             </div>
-        );
-        }
-        else{
-            return(
-                <div className="grid-item" draggable="false" onClick={this.handleClick}>
-                    <img alt={"Loading"} className="back-side" src="https://cdn.pixabay.com/photo/2012/05/07/18/53/card-game-48983_960_720.png"/>
-                </div>
-            )
-        }
+        )
     }
 }
 

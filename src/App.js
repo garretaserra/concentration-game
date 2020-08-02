@@ -3,6 +3,7 @@ import "./App.css";
 import Card from "./card/card";
 import "./landing-page/landing-page";
 import LandingPage from "./landing-page/landing-page";
+import Clock from "./clock/clock";
 
 class App extends React.Component {
     constructor(props) {
@@ -92,7 +93,7 @@ class App extends React.Component {
         let shuffledCards = new Array(20);
         let promises = cards.map((card, i) => {
             return new Promise((resolve) => {
-                shuffledCards[randomArr[i]] = card;
+                shuffledCards[randomArr[i]] = JSON.parse(JSON.stringify(card));
                 resolve();
             });
         });
@@ -146,10 +147,11 @@ class App extends React.Component {
             // Incorrect: selected different cards
             else{
                 //Show cards briefly
-                this.updateCards(['show'], true, [i, selectedCardIndex],
-                    setTimeout(()=>{
-                        this.updateCards(['show', false, [i, selectedCardIndex]])
-                    }, 1500)
+                this.updateCards(['show'], true, [i, selectedCardIndex], () => {
+                        setTimeout(() => {
+                            this.updateCards(['show'], false, [i, selectedCardIndex])
+                        }, 1500);
+                    }
                 );
             }
             this.setState({selectedCardIndex: null});
@@ -168,6 +170,7 @@ class App extends React.Component {
                             />
                         ))}
                     </div>
+                    <Clock/>
                 </div>
             );
         }

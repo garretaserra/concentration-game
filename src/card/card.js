@@ -36,7 +36,7 @@ class Card extends React.Component{
             }
         return(
             <div ref={c => (this.component = c)} className="grid-item" onClick={this.handleClick.bind(this)}>
-                <img className="back-side" src={this.props.card.image} alt=""/>
+                <img data-testid={this.props.i} className="back-side" src={this.props.card.image} alt=""/>
                 <img className="front-side" src="https://cdn.pixabay.com/photo/2012/05/07/18/53/card-game-48983_960_720.png" alt=""/>
             </div>
         )

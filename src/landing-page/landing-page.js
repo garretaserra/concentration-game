@@ -13,14 +13,14 @@ class LandingPage extends React.Component{
         this.setState({keyword: event.target.value})
     }
 
-    onSubmit = (event) =>{
+    onSubmit = () =>{
         this.props.handleSubmit(this.state.keyword);
     }
 
     render() {
         return (
             <div>
-                <input type="text" value={this.state.keyword} onChange={this.onChange}/>
+                <input type="text" placeholder="Keyword" value={this.state.keyword} onChange={this.onChange}/>
                 <button disabled={!this.state.keyword} onClick={this.onSubmit}>Start Game!</button>
             </div>
         )}

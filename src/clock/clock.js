@@ -22,7 +22,11 @@ class Clock extends React.Component {
     }
 
     render() {
-        let timeElapsed = Math.floor((this.state.currentTime - this.props.startTime) / 1000);
+        let timeElapsed;
+        if(this.props.startTime)
+            timeElapsed = Math.max(Math.floor((this.state.currentTime - this.props.startTime) / 1000), 0);
+        else
+            timeElapsed = 0;
         return(
             <div className="clock">
                 Time elapsed {timeElapsed}s

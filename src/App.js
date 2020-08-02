@@ -14,7 +14,7 @@ class App extends React.Component {
             gameFinished: false,        // True when on summary screen
             elapsedTime: 0,             // Time taken by the player to finish game (seconds)
             selectedCardIndex: null,    // Used to save first selection of the user when trying to select pairs
-            startTime: Date.now(),
+            startTime: null,
         };
     }
 
@@ -67,7 +67,7 @@ class App extends React.Component {
             })
         });
         Promise.all(promises).then(() => {
-            this.setState({cards: cards, gameFinished: false}, () => {this.startGame(cards)});
+            this.setState({cards: cards, gameFinished: false, startTime: null}, () => {this.startGame(cards)});
 
         });
     }
@@ -92,7 +92,7 @@ class App extends React.Component {
 
     startGame(cards){
         this.preventClick = true;
-        this.setState({gameStarted: true, startTime: Date.now()});
+        this.setState({gameStarted: true});
         let randomArr = randomArray(20);
         let shuffledCards = new Array(20);
         let promises = cards.map((card, i) => {
@@ -123,6 +123,10 @@ class App extends React.Component {
     }
 
     handleClick = (i) =>{
+        // If first click of the game, start time
+        if(this.state.startTime === null)
+            this.setState({startTime: Date.now()});
+
         let selectedCardIndex = this.state.selectedCardIndex;
         // Reject clicking the on the same card twice or on solved card
         if(selectedCardIndex === i || this.state.cards[i].solved || this.preventClick){}
@@ -141,8 +145,8 @@ class App extends React.Component {
                         return carry + (card.solved ? 1 : 0)
                     }, 0);
                     if(correctCards === 20){
+                        let elapsedTime = Math.floor((Date.now() - this.state.startTime)/1000);
                         setTimeout(()=>{
-                            let elapsedTime = Math.floor((Date.now() - this.state.startTime)/1000);
                             this.setState({elapsedTime: elapsedTime, gameFinished: true});
                         }, 500);
                     }
@@ -150,8 +154,8 @@ class App extends React.Component {
             }
             // Incorrect: selected different cards
             else{
-                //Show cards briefly
                 this.preventClick = true;
+                //Show cards briefly
                 this.updateCards(['show'], true, [i, selectedCardIndex], () => {
                         setTimeout(() => {
                             this.updateCards(['show'], false, [i, selectedCardIndex])

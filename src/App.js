@@ -20,6 +20,12 @@ class App extends React.Component {
         let xhr = new XMLHttpRequest();
         xhr.addEventListener('load', ()=>{
             let res = JSON.parse(xhr.response);
+            //Check that there are enough images
+            if(res.hits.length < 8){
+                window.alert('Keyword with only ' + res.hits.length + ' images, 8 are needed.');
+                return;
+            }
+
             let cards = new Array(16);
             let promises = res.hits.map((image, i)=>{
                 return new Promise((resolve =>{

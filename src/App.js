@@ -19,34 +19,61 @@ class App extends React.Component {
         this.setState({gameStarted: true});
         let xhr = new XMLHttpRequest();
         xhr.addEventListener('load', ()=>{
-            // Set state with the randomly ordered images on an array
-            let randomArr = randomArray(16)
-            let cards = new Array(16);
             let res = JSON.parse(xhr.response);
+            let cards = new Array(16);
             let promises = res.hits.map((image, i)=>{
-                return new Promise((resolve)=>{
+                return new Promise((resolve =>{
                     let card = new Card();
                     card.id = image.id;
                     card.image = image.largeImageURL;
                     card.show = false;
-                    cards[randomArr[i*2]] = card;
-                    cards[randomArr[i*2+1]] = card;
+                    cards[i*2] = card;
+                    cards[i*2+1] = card;
                     resolve();
-                })
-            });
+                }))
+            })
             Promise.all(promises).then(()=>{
-                this.setState({cards: cards}, ()=>{
-                    setTimeout(()=>{
-                        this.startGame();
-                    }, 1500);
-                });
+                this.startGame(cards);
             })
         });
         xhr.open('GET', 'https://pixabay.com/api/?key=' + this.apiKey + '&q=' + keyword + '&per_page=8');
         xhr.send();
     }
 
-    startGame(){
+    resetGame() {
+        let cards = new Array(16);
+        let promises = this.state.cards.map((card)=>{
+            return new Promise((resolve)=>{
+                card.show = false;
+                card.solved = false;
+                cards.push(card);
+                resolve();
+            })
+        })
+        Promise.all(promises).then(()=>{
+            this.startGame(this.state.cards);
+        });
+    }
+
+    startGame(cards){
+        let randomArr = randomArray(16)
+        let shuffledCards = new Array(16);
+        let promises = cards.map((card, i)=>{
+            return new Promise((resolve)=>{
+                shuffledCards[randomArr[i]] = card;
+                resolve();
+            })
+        });
+        Promise.all(promises).then(()=>{
+            this.setState({cards: shuffledCards}, ()=>{
+                setTimeout(()=>{
+                    this.temporarilyShowCards();
+                }, 1500);
+            });
+        })
+    }
+
+    temporarilyShowCards(){
         // Show cards
         let cards = [...this.state.cards];
         let promises = cards.map((card)=>{
@@ -99,7 +126,10 @@ class App extends React.Component {
                     let correctCards = this.state.cards.reduce((carry, card)=>{return carry + (card.solved ? 1 : 0)}, 0);
                     if(correctCards === 16){
                         setTimeout(()=>{
-                            alert('You have won!');
+                            if(window.confirm('You have won!, do you want to choose another keyword?'))
+                                window.location.reload();
+                            else
+                                this.resetGame();
                         }, 500);
                     }
                 });

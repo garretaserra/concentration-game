@@ -12,6 +12,7 @@ class App extends React.Component {
             cards: Card[16] = new Array(20),
             gameStarted: false, // Used to detect if player has submitted a keyword.
             selectedCardIndex: null,    // Used to save first selection of the user when trying to select pairs
+            startTime: Date.now(),
         };
     }
 
@@ -88,7 +89,7 @@ class App extends React.Component {
     }
 
     startGame(cards){
-        this.setState({gameStarted: true});
+        this.setState({gameStarted: true, startTime: Date.now()});
         let randomArr = randomArray(20);
         let shuffledCards = new Array(20);
         let promises = cards.map((card, i) => {
@@ -136,7 +137,8 @@ class App extends React.Component {
                     }, 0);
                     if(correctCards === 20){
                         setTimeout(()=>{
-                            if(window.confirm('You have won!, do you want to choose another keyword?'))
+                            let elapsedTime = Math.floor((Date.now() - this.state.startTime)/1000);
+                            if(window.confirm('You have won! It has taken ' + elapsedTime + ' seconds to finish, do you want to choose another keyword?'))
                                 window.location.reload();
                             else
                                 this.resetGame();
@@ -170,7 +172,7 @@ class App extends React.Component {
                             />
                         ))}
                     </div>
-                    <Clock/>
+                    <Clock gameState={this.state.gameStarted} startTime={this.state.startTime}/>
                 </div>
             );
         }

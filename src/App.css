@@ -6,8 +6,9 @@
 .grid-container{
   display: grid;
   grid-template-columns: auto auto auto auto auto;
-  grid-template-rows: repeat(4, min(25vw, 23vh));
+  grid-template-rows: repeat(4, min(25vw, 22vh));
   grid-gap: 1%;
+  height: min(91vh, 104vw);
 }
 
 .grid-item{

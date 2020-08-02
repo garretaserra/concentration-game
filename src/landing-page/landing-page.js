@@ -20,7 +20,7 @@ class LandingPage extends React.Component{
     render() {
         return (
             <div className="container">
-                <input type="text" placeholder="Keyword" value={this.state.keyword} onChange={this.onChange}/>
+                <input type="text" placeholder="Enter Keyword" value={this.state.keyword} onChange={this.onChange}/>
                 <button disabled={!this.state.keyword} onClick={this.onSubmit}>Start Game!</button>
             </div>
         )}

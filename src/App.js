@@ -8,7 +8,7 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            cards: Card[16] = new Array(16),
+            cards: Card[16] = new Array(20),
             gameStarted: false, // Used to detect if player has submitted a keyword.
             selectedCardIndex: null,    // Used to save first selection of the user when trying to select pairs
         }
@@ -23,12 +23,12 @@ class App extends React.Component {
         xhr.addEventListener('load', ()=>{
             let res = JSON.parse(xhr.response);
             //Check that there are enough images
-            if(res.hits.length < 8){
-                window.alert('Keyword with only ' + res.hits.length + ' images, 8 are needed.');
+            if(res.hits.length < 10){
+                window.alert('Keyword with only ' + res.hits.length + ' images, 10 are needed.');
                 return;
             }
 
-            let cards = new Array(16);
+            let cards = new Array(20);
             let promises = res.hits.map((image, i)=>{
                 return new Promise((resolve =>{
                     let card = new Card();
@@ -44,7 +44,7 @@ class App extends React.Component {
                 this.startGame(cards);
             })
         });
-        xhr.open('GET', 'https://pixabay.com/api/?key=' + this.apiKey + '&q=' + keyword + '&per_page=8');
+        xhr.open('GET', 'https://pixabay.com/api/?key=' + this.apiKey + '&q=' + keyword + '&per_page=10');
         xhr.send();
     }
 
@@ -69,8 +69,8 @@ class App extends React.Component {
 
     startGame(cards){
         this.setState({gameStarted: true});
-        let randomArr = randomArray(16)
-        let shuffledCards = new Array(16);
+        let randomArr = randomArray(20)
+        let shuffledCards = new Array(20);
         let promises = cards.map((card, i)=>{
             return new Promise((resolve)=>{
                 shuffledCards[randomArr[i]] = card;
@@ -109,7 +109,7 @@ class App extends React.Component {
                     Promise.all(promises).then(()=>{
                         this.setState({cards: cards});
                     })
-                }, 2000);
+                }, 1500);
             })
         })
     }
@@ -137,7 +137,7 @@ class App extends React.Component {
                 this.setState({cards: cards}, () =>{
                     // Check if game has been won
                     let correctCards = this.state.cards.reduce((carry, card)=>{return carry + (card.solved ? 1 : 0)}, 0);
-                    if(correctCards === 16){
+                    if(correctCards === 20){
                         setTimeout(()=>{
                             if(window.confirm('You have won!, do you want to choose another keyword?'))
                                 window.location.reload();

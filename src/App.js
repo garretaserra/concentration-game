@@ -18,6 +18,12 @@ class App extends React.Component {
         };
     }
 
+    // Timings (ms)
+    startGameDelay = 1500;      // Delay before cards are revealed briefly to allow images to be loaded
+    endGameDelay = 500;         // Delay after finishing game and before player is redirected to end game screen
+    showCardsAtStart = 1500;    // Time cards will be revealed at the start of the game
+    incorrectShowCards = 1500;  // Time cards will be shown when wrong pair has been selected
+
     apiKey = "5707439-576ba9bbcdefa781f30c1cc40";
     keywordSubmit = keyword => {
         let xhr = new XMLHttpRequest();
@@ -105,7 +111,7 @@ class App extends React.Component {
             this.setState({cards: shuffledCards}, () => {
                 setTimeout(()=>{
                     this.temporarilyShowCards();
-                }, 1500);
+                }, this.startGameDelay);
             });
         });
     }
@@ -118,7 +124,7 @@ class App extends React.Component {
             setTimeout(()=>{
                 this.updateCards(['show'], false, []);
                 this.preventClick = false;
-            }, 1500);
+            }, this.showCardsAtStart);
         });
     }
 
@@ -148,7 +154,7 @@ class App extends React.Component {
                         let elapsedTime = Math.floor((Date.now() - this.state.startTime)/1000);
                         setTimeout(()=>{
                             this.setState({elapsedTime: elapsedTime, gameFinished: true});
-                        }, 500);
+                        }, this.endGameDelay);
                     }
                 });
             }
@@ -160,7 +166,7 @@ class App extends React.Component {
                         setTimeout(() => {
                             this.updateCards(['show'], false, [i, selectedCardIndex])
                             this.preventClick = false;
-                        }, 1500);
+                        }, this.incorrectShowCards);
                     }
                 );
             }

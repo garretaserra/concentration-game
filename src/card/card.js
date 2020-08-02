@@ -26,6 +26,7 @@ class Card extends React.Component{
         img.src = this.props.card.image;
     }
 
+    // used to detect when the card should change its shown state
     isShown = false;
     render() {
         let shouldShow = this.props.card.show || this.props.card.solved || this.props.selectedCard === this.props.i;

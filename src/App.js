@@ -116,7 +116,7 @@ class App extends React.Component {
 
     handleClick = (i) =>{
         let selectedCardIndex = this.state.selectedCardIndex;
-        // Reject clicking the same card twice or on solved card
+        // Reject clicking the on the same card twice or on solved card
         if(selectedCardIndex === i || this.state.cards[i].solved){}
         // Selecting first card
         else if(selectedCardIndex == null){
@@ -124,7 +124,7 @@ class App extends React.Component {
         }
         // Selecting second card
         else{
-            // Correct
+            // Correct: selected a pair of cards
             if(this.state.cards[i].id === this.state.cards[selectedCardIndex].id){
                 // Update cards to solved state
                 let cards = [...this.state.cards];
@@ -147,8 +147,9 @@ class App extends React.Component {
                     }
                 });
             }
-            // Incorrect (show cards briefly)
+            // Incorrect: selected different cards
             else{
+                //Show cards briefly
                 let cards = [...this.state.cards];
                 let card = {...this.state.cards[i]};
                 card.show = true;
@@ -194,6 +195,7 @@ class App extends React.Component {
 
 export default App;
 
+// Return array of length 'len' filled with [0-len]
 function randomArray(len) {
     let arr0 = [...Array(len).keys()];
     let result = [];
